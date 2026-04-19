@@ -1,17 +1,20 @@
 import { expect } from "@playwright/test";
 import { test } from "../utils/fixtures";
 import { APILogger } from "../utils/logger";
+import { create } from "node:domain";
+import { createToken } from "../helper/create-token";
 
 let authToken: string;
 
 test.beforeAll("Setup before all tests", async ({ api, config }) => {
-  const tokenResponse = await api
-    .path("/users/login")
-    .body({
-      user: { email: config.userEmail, password: config.userPassword },
-    })
-    .postRequest(200);
-  authToken = "Token " + tokenResponse.user.token;
+  // const tokenResponse = await api
+  //   .path("/users/login")
+  //   .body({
+  //     user: { email: config.userEmail, password: config.userPassword },
+  //   })
+  //   .postRequest(200);
+  // authToken = "Token " + tokenResponse.user.token;
+  authToken = await createToken(config.userEmail, config.userPassword);
   console.log("Token is created");
 });
 

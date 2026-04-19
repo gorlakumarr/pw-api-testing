@@ -4,11 +4,11 @@ import { APILogger } from "../utils/logger";
 
 let authToken: string;
 
-test.beforeAll("Setup before all tests", async ({ api }) => {
+test.beforeAll("Setup before all tests", async ({ api, config }) => {
   const tokenResponse = await api
     .path("/users/login")
     .body({
-      user: { email: "gorlakumarr@gmail.com", password: "BlueBag@1997" },
+      user: { email: config.userEmail, password: config.userPassword },
     })
     .postRequest(200);
   authToken = "Token " + tokenResponse.user.token;
@@ -118,4 +118,3 @@ test("Logger Test", () => {
 function customExpect(length: any) {
   throw new Error("Function not implemented.");
 }
-

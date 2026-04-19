@@ -3,7 +3,7 @@ import { APILogger } from "./logger";
 
 export class RequestHandler {
   private request: APIRequestContext;
-  private baseURL: string = "";
+  private baseURL: string | undefined = undefined;
   private defaultBaseURL: string;
   private apiPath: string = "";
   private queryParams: object = {};
@@ -48,6 +48,7 @@ export class RequestHandler {
     const response = await this.request.get(url, {
       headers: this.apiHeaders,
     });
+    this.cleanAPIFields();
     const responseJSON = await response.json();
     expect(response.status()).toBe(statusCode);
     this.logger.logResponse(
@@ -67,6 +68,7 @@ export class RequestHandler {
       headers: this.apiHeaders,
       data: this.apibody,
     });
+    this.cleanAPIFields();
     const responseJSON = await response.json();
     expect(response.status()).toBe(statusCode);
     this.logger.logResponse(
@@ -86,6 +88,7 @@ export class RequestHandler {
       headers: this.apiHeaders,
       data: this.apibody,
     });
+    this.cleanAPIFields();
     const responseJSON = await response.json();
     this.logger.logResponse(
       response.status(),
@@ -104,6 +107,7 @@ export class RequestHandler {
     const response = await this.request.delete(url, {
       headers: this.apiHeaders,
     });
+    this.cleanAPIFields();
     this.logger.logResponse(response.status(), url, this.apiHeaders, null);
     this.statusCodeValidator(response.status(), statusCode, this.deleteRequest);
     expect(response.status()).toBe(statusCode);
@@ -123,7 +127,7 @@ export class RequestHandler {
   private statusCodeValidator(
     actualStatusCode: number,
     expectedStatusCode: number,
-    callingMethod: Function
+    callingMethod: Function,
   ) {
     if (actualStatusCode !== expectedStatusCode) {
       const logs = this.logger.getRecentLogs();
@@ -132,5 +136,13 @@ export class RequestHandler {
       Error.captureStackTrace(error, callingMethod);
       throw error;
     }
+  }
+
+  private cleanAPIFields() {
+    this.baseURL = undefined;
+    this.apiPath = "";
+    this.queryParams = {};
+    this.apiHeaders = {};
+    this.apibody = {};
   }
 }
